@@ -3,7 +3,7 @@
     <head>
         <title>CRUD Operations with Vanila JS</title>
         <link rel="stylesheet" type="text/css" href="style.css">
-        <script type="text/javascript" src="index.js"></script>
+        <script type="text/javascript" src="script.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
@@ -12,146 +12,69 @@
     <body>
         <div class="content">
             <div class="heading"><h1>CRUD Operations with <a id="vanillajs">Vanilla JS</a> <p id="tick">✔</p></h1></div>
-            <!-- <hr> -->
+            <input type="text" placeholder="🔎 Search firstname..." id="searchInput" onkeyup="searchRecord()" title="Search firstname...">
             <!--Table for displaying content-->
             <div class = "tablecontent">
-            <table id="displayRecordTable">
-                <tr id="tabletitle">
-                    <th>Record ID</th>
-                    <th>Firstname</th>
-                    <th>Lastname</th>
-                    <th>Mail Id</th>
-                    <th>Country</th>
-                </tr>
-            </table>
+                <table id="userList">
+                    <thead>
+                        <tr id="tabletitle">
+                            <th>Firstname</th>
+                            <th>Lastname</th>
+                            <th>Mail Id</th>
+                            <th>Country</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>    
+                    </tbody>
+                </table>
             </div>
         </div>
 
         <!-- CRUD Buttons -->
         <div class="buttons">
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createModal">
-                Create Record
-            </button>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#searchIDModal">
-                Edit Record
-            </button>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deleteModal">
-                Delete Record
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#recordModal">
+                ➕ Create Record
             </button>
         </div>
 
-        <!--Create Modal-->
-        <div class="modal fade" id="createModal">
+        <!--Modal to get data from user-->
+        <div class="modal fade" id="recordModal">
             <div class="modal-dialog">
                 <div class="modal-content">
                 
-                <!--Create Modal Header -->
+                <!--Modal Header -->
                 <div class="modal-header">
                     <h4 class="modal-title">Create Record</h4>
                     <button type="button" class="close" data-dismiss="modal" onClick="clearForm()">❌</button>
                 </div>
                 
-                <!--Create3 Modal body -->
-                <div class="modal-body createModalBody">
-                        <form action="javascript:void(0)" method="POST" id="createRecordForm" onsubmit="printRecord()"> 
-                          <label for="fname">First Name</label>
-                          <input type="text" id="fname" placeholder="Your name.." required=true>
-                      
-                          <label for="lname">Last Name</label>
-                          <input type="text" id="lname" placeholder="Your last name.." required=true> 
+                <!--Modal body -->
+                    <div class="modal-body recordModalBody">
+                            <form action="javascript:void(0)" autocomplete="off" method="POST" id="createRecordForm" onsubmit="onFormSubmit()"> 
+                                <label for="firstName">First Name</label>
+                                <input type="text" id="firstName" placeholder="Your name.." required=true>
+                            
+                                <label for="lastName">Last Name</label>
+                                <input type="text" id="lastName" placeholder="Your last name.." required=true> 
 
-                          <label for="mailid">Mail id</label>
-                          <input type="text" id="mailid" placeholder="Your mail id.." required=true>
-                      
-                          <label for="countryForm">Country</label>
-                          <select id="country" required=true>
-                            <option value="" selected disabled hidden> Select an Option </option> 
-                            <option value="India">India</option>  
-                            <option value="Australia">Australia</option>
-                            <option value="Canada">Canada</option>
-                            <option value="USA">USA</option>
-                          </select>
-                        
-                          <input type="submit" value="Save Record">
-                        </form>
+                                <label for="mailId">Mail id</label>
+                                <input type="text" id="mailId" placeholder="Your mail id.." required=true>
+                                
+                                <label for="country">Country</label>
+                                <select id="country" required=true>
+                                    <option value="" selected disabled hidden> Select an Option </option> 
+                                    <option value="India">India</option>  
+                                    <option value="Australia">Australia</option>
+                                    <option value="Canada">Canada</option>
+                                    <option value="USA">USA</option>
+                                </select>
+                                
+                                <input type="submit" id="modalButton" value="Save Record">
+                            </form>
+                    </div>
                 </div>
-                
-                </div>
-            </div>
-
-           
-        </div>
-
-        <!--Search Modal-->
-        <div class="modal fade" id="searchIDModal">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                
-                <!-- Search Modal Header -->
-                <div class="modal-header">
-                    <h4 class="modal-title">Search Record ID to edit</h4>
-                    <button type="button" class="close" data-dismiss="modal" onClick="clearForm()">❌</button>
-                </div>
-                
-                <!-- Search Modal body -->
-                <div class="modal-body searchIDModalBody">
-                        <form action="javascript:void(0)" method="POST" id="searchRecordIDForm" onsubmit="searchRecordID()"> 
-                          <label for="recordNo">Enter Record Number to Edit: </label>
-                          <input type="number" id="recordNo" placeholder="Record to edit.." required=true>
-                          <input type="submit" value="Search ID">
-                        </form>
-                </div>
-                
-                </div>
-            </div>
-
-           
-        </div>
-
-        <!-- Edit Record Modal -->
-        <div class="modal fade" id="showRecordModal">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                
-                <!-- Edit Record Modal Header -->
-                <div class="modal-header">
-                    <h4 class="modal-title">Edit Record</h4>
-                    <button type="button" class="close" data-dismiss="modal" onClick="clearForm()">❌</button>
-                </div>
-                
-                <!-- Edit Record Modal body -->
-                <div class="modal-body">
-                        <form action="javascript:void(0)" method="POST" id="editRecordForm" onsubmit="editRecord()"> 
-                          
-                        
-                           <input type="hidden" id="editRecordFormID">
-
-                          <label for="fname">First Name</label>
-                          <input type="text" id="fname" placeholder="Your name.." required=true>
-                      
-                          <label for="lname">Last Name</label>
-                          <input type="text" id="lname" placeholder="Your last name.." required=true> 
-
-                          <label for="mailid">Mail id</label>
-                          <input type="text" id="mailid" placeholder="Your mail id.." required=true>
-                      
-                          <label for="countryForm">Country</label>
-                          <select id="country" required=true>
-                            <option value="" selected disabled hidden> Select an Option </option> 
-                            <option value="India">India</option>  
-                            <option value="Australia">Australia</option>
-                            <option value="Canada">Canada</option>
-                            <option value="USA">USA</option>
-                          </select>
-                        
-                          <input type="submit" value="Update Record">
-                        </form>
-                </div>
-                
-                </div>
-            </div>
-
-           
+            </div>        
         </div>
 
 
